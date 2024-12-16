@@ -1,6 +1,8 @@
 package com.leetcode.top100;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -29,9 +31,18 @@ import java.util.List;
  *
  */
 public class LettersCombinationOfPhoneNumber {
+	
+	static Map<Character, Set<Character>> m = Map.of(
+			'1', Set.of(),
+			'2', Set.of(),
+	);
 
     public List<String> letterCombinations(String digits) {
         //TODO:
         return null;
+    }
+    
+    public static void main(String[] args) {
+    	
     }
 }
