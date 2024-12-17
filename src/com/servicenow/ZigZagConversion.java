@@ -51,8 +51,7 @@ public class ZigZagConversion {
         if (numRows == 1) {
             return s;
         }
-
-
+        
         TreeMap<Integer, Character> m = new TreeMap<>();
 
         int n = s.length();

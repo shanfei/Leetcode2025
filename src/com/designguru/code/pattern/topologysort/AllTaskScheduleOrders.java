@@ -1,9 +1,6 @@
 package com.designguru.code.pattern.topologysort;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  *
@@ -51,25 +48,62 @@ import java.util.Queue;
 // TODO:
 public class AllTaskScheduleOrders {
 
-    List<List<Integer>> orders = new ArrayList<>();
+    static List<List<Integer>> orders = new ArrayList<>();
 
-    public List<List<Integer>> printOrders(int tasks, int[][] prerequisites) {
+    public static List<List<Integer>> printOrders(int tasks, int[][] prerequisites) {
 
-
+        // build inorder
         int[] inorders = new int[tasks];
 
         for ( int[] e : prerequisites ) {
             inorders[e[1]]++;
         }
 
+        // construct adj list
+        Map<Integer, Set<Integer>> adj = new HashMap<>();
+
+        for ( int[] e : prerequisites ) {
+
+            int fromV = e[0];
+            int toV = e[1];
+
+            Set<Integer> set = adj.getOrDefault(fromV, new HashSet<>());
+            set.add(toV);
+            adj.put(fromV, set);
+
+        }
+
         for ( int i = 0; i < inorders.length; ++i ) {
             if ( inorders[i] == 0 ) {
-                orders.add(toplogicSort(i, prerequisites, inorders));
+                dfs(i, adj, inorders, orders, new ArrayList<>());
             }
         }
 
-
         return orders;
+    }
+
+    public static void dfs( int v, Map<Integer, Set<Integer>> adj, int[] inorders, List<List<Integer>> results, List<Integer> p) {
+
+        // out order is 0
+        if ( v == -1 ) {
+            results.add(new ArrayList<>(p));
+            return;
+        }
+
+        if ( inorders[v] == 0 ) {
+            p.add(v);
+        }
+
+        if ( adj.get(v) != null ) {
+            for ( int e : adj.get(v) ) {
+                dfs(e, adj, inorders, results, p);
+            }
+
+            inorders[v]--;
+        } else {
+            dfs(-1, adj, inorders, results, p);
+        }
+
     }
 
     public List<Integer> toplogicSort(int v, int[][] edges, int[] inordersI) {
@@ -102,6 +136,19 @@ public class AllTaskScheduleOrders {
         }
 
         return result;
+
+    }
+
+    public static void main(String[] args) {
+
+        List<List<Integer>> orders = printOrders(4, new int[][]{{3, 2}, {3, 0}, {2, 0}, {2, 1}});
+
+        for ( List<Integer> order : orders ) {
+            for (Integer o : order) {
+                System.out.print(o);
+            }
+            System.out.println();
+        }
 
     }
 }

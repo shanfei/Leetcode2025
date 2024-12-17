@@ -1,5 +1,6 @@
 package com.leetcode.top100;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,15 +35,65 @@ public class LettersCombinationOfPhoneNumber {
 	
 	static Map<Character, Set<Character>> m = Map.of(
 			'1', Set.of(),
-			'2', Set.of(),
+			'2', Set.of('a', 'b', 'c'),
+            '3', Set.of('d', 'e', 'f'),
+            '4', Set.of('g', 'h', 'i'),
+            '5', Set.of('j', 'k', 'l'),
+            '6', Set.of('m', 'n', 'o'),
+            '7', Set.of('p', 'q', 'r', 's'),
+            '8', Set.of('t', 'u', 'v'),
+            '9', Set.of('w', 'x', 'y', 'z')
 	);
 
-    public List<String> letterCombinations(String digits) {
-        //TODO:
-        return null;
+    public static List<String> letterCombinations(String digits) {
+
+        char[] c = digits.toCharArray();
+
+        List<String> result = new ArrayList<>();
+
+        combination(c, 0, new StringBuilder(), result );
+
+        return result;
+    }
+
+    static void combination( char[] c, int index, StringBuilder sb, List<String> result ) {
+
+        if ( index == c.length ) {
+            if (!sb.isEmpty()) {
+                result.add( sb.toString() );
+            }
+            return;
+        }
+
+        char key = c[index];
+
+        Set<Character> set = m.get(key);
+
+        for ( char e : set ) {
+            sb.append(e);
+            combination( c, index + 1, sb, result);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
     }
     
     public static void main(String[] args) {
-    	
+        List<String> result = letterCombinations("23");
+
+        for (String s : result) {
+            System.out.print(s + " : ");
+        }
+
+        System.out.println();
+
+        result = letterCombinations("2");
+
+        for (String s : result) {
+            System.out.print(s + " : ");
+        }
+
+        System.out.println();
+
+
     }
 }
