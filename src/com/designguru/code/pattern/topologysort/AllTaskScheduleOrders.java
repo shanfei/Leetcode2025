@@ -141,14 +141,28 @@ public class AllTaskScheduleOrders {
 
     public static void main(String[] args) {
 
-        List<List<Integer>> orders = printOrders(4, new int[][]{{3, 2}, {3, 0}, {2, 0}, {2, 1}});
+//        List<List<Integer>> orders = printOrders(4, new int[][]{{3, 2}, {3, 0}, {2, 0}, {2, 1}});
+//
+//        for ( List<Integer> order : orders ) {
+//            for (Integer o : order) {
+//                System.out.print(o);
+//            }
+//            System.out.println();
+//        }
 
-        for ( List<Integer> order : orders ) {
-            for (Integer o : order) {
-                System.out.print(o);
-            }
-            System.out.println();
-        }
+        System.out.println( 0 | 1) ;
+        System.out.println( 0 | 2) ;
+        System.out.println( 0 | 4) ;
+
+        System.out.println( 1 | 1) ;
+        System.out.println( 1 | 2) ;
+        System.out.println( 1 | 4) ;
+
+        System.out.println( 2 | 1) ;
+        System.out.println( 2 | 2) ;
+        System.out.println( 2 | 4) ;
+
+
 
     }
 }
