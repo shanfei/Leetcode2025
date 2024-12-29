@@ -56,7 +56,7 @@ It's impossible to change any character as k = 0.
 public class LexicographicallySmallestStringAfterOpeartionsWithConstrain {
 	
 	public String getSmallestString(String s, int k) {
-        
+        return "";
     }
 	
 	
