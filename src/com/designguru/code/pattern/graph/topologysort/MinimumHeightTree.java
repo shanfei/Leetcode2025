@@ -1,4 +1,4 @@
-package com.designguru.code.pattern.topologysort;
+package com.designguru.code.pattern.graph.topologysort;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.designguru.code.pattern.unionfind;
+package com.designguru.code.pattern.graph.unionfind;
 
 
 /**
