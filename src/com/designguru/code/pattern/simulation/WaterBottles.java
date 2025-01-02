@@ -44,9 +44,34 @@ package com.designguru.code.pattern.simulation;
  */
 public class WaterBottles {
 
-    public int getMaxBottles(int numBottles, int numExchange) {
-        // ToDo: Write Your Code Here.
-        return 0;
+    public static int getMaxBottles(int numBottles, int numExchange) {
+
+        int count = 0;
+        int full = numBottles;
+        int empty = 0;
+
+
+        while ( true ) {
+
+            count += full;
+
+            numBottles = full + empty;
+
+            full = numBottles / numExchange;
+            empty = numBottles % numExchange;
+
+            if ( full == 0 ) {
+                break;
+            }
+
+        }
+
+        return count;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getMaxBottles(15, 4));
+        System.out.println(getMaxBottles(7, 3));
     }
 
 }
