@@ -29,7 +29,7 @@ package com.servicenow;
 public class SlidingWindowMaxim {
 
     public int[] maxSlidingWindow(int[] nums, int k) {
-
+        return null;
     }
 
 
