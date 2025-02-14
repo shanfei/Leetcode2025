@@ -1,6 +1,8 @@
 package com.designguru.code.pattern.graph.topologysort;
 
 
+import java.util.*;
+
 /**
  *
  * Problem Statement
@@ -54,9 +56,123 @@ package com.designguru.code.pattern.graph.topologysort;
  */
 public class AlienDictionary {
 
-    public String findOrder(String[] words) {
-        // TODO: Write your code here
-        return "";
+    public static String findOrder(String[] words) {
+
+        List<char[]> wordsCharList = new ArrayList<>();
+
+        for (String w: words) {
+            wordsCharList.add(w.toCharArray());
+        }
+
+        Integer[] indegreeMapOfChars = new Integer[26];
+
+        int i = 0;
+
+        boolean run = true;
+
+        Map<Integer, Set<Integer>> adjancetMap = new HashMap<>();
+
+        while ( run ) {
+
+            for (int j = 1; j < wordsCharList.size(); ++j) {
+
+                if ( i >= wordsCharList.get(j - 1).length || i >= wordsCharList.get(j).length ) {
+                    run = false;
+                    break;
+                }
+
+                int parent = wordsCharList.get(j - 1)[i] - 'a';
+                int child = wordsCharList.get(j)[i] - 'a';
+
+                if (parent != child) {
+                    Set<Integer> l = adjancetMap.getOrDefault(parent, new HashSet<>());
+                    l.add(child);
+                    adjancetMap.put(parent, l);
+                }
+
+                if (indegreeMapOfChars[parent] == null) {
+                    indegreeMapOfChars[parent] = 0;
+                }
+
+                if (indegreeMapOfChars[child] == null) {
+                    indegreeMapOfChars[child] = 1;
+                } else if (child != parent) {
+                    indegreeMapOfChars[child]++;
+                }
+            }
+
+            i++;
+        }
+
+
+        return bfs(adjancetMap, indegreeMapOfChars);
+    }
+
+    static String bfs(Map<Integer, Set<Integer>> adjancetMap,  Integer[] indegreeMapOfChars) {
+
+        List<Integer> l = new ArrayList<>();
+
+        int size = 0;
+
+        for (int i = 0; i < indegreeMapOfChars.length; ++i) {
+            Integer indegree = indegreeMapOfChars[i];
+            if (indegree != null && indegree == 0) {
+                l.add(i);
+            }
+
+            if (indegree != null) {
+                size++;
+            }
+        }
+
+        Set<Integer> visited = new HashSet<>();
+
+        Queue<Integer> queue = new LinkedList<>(l);
+
+        StringBuilder sb = new StringBuilder();
+
+        while ( !queue.isEmpty() ) {
+
+            int i = queue.poll();
+
+            sb.append((char)(i + 'a'));
+
+            visited.add(i);
+
+            Set<Integer> k = adjancetMap.get(i);
+
+           for (int j : k) {
+
+               if (visited.contains(j)) {
+                   continue;
+               }
+
+               indegreeMapOfChars[j]--;
+
+               if (indegreeMapOfChars[j] == 0) {
+                   queue.add(j);
+               }
+           }
+
+        }
+
+        if (sb.length() != size )
+            return "";
+
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+
+        String[][] p = {
+//                {"ba", "bc", "ac", "cab"},
+//                {"cab", "aaa", "aab"},
+                {"ywx", "wz", "xww", "xz", "zyy", "zwz"}
+        } ;
+
+        for (String[] pp : p) {
+            System.out.println(findOrder(pp));
+        }
     }
 
 
