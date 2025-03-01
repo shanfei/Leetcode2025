@@ -1,4 +1,4 @@
-package com.amazon;
+package com.leetcode.amazon;
 
 import java.util.Iterator;
 import java.util.TreeSet;

@@ -1,6 +1,4 @@
-package com.amazon;
-
-import java.util.*;
+package com.leetcode.amazon;
 
 /**
  *

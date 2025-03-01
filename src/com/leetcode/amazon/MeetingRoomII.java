@@ -1,6 +1,5 @@
-package com.amazon;
+package com.leetcode.amazon;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.amazon;
+package com.leetcode.amazon;
 
 
 import java.util.PriorityQueue;
