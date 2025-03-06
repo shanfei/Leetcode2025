@@ -42,125 +42,135 @@ import java.util.*;
  *
  * toplogic sort with backtrack
  *
- * dfs
+ * combination + toplogic sort
  *
  */
-// TODO:
 public class AllTaskScheduleOrders {
 
-    static List<List<Integer>> orders = new ArrayList<>();
 
-    public static List<List<Integer>> printOrders(int tasks, int[][] prerequisites) {
+    public List<List<Integer>> printOrders(int tasks, int[][] prerequisites) {
 
-        // build inorder
-        int[] inorders = new int[tasks];
+        List<List<Integer>> result = new ArrayList<>();
 
-        for ( int[] e : prerequisites ) {
-            inorders[e[1]]++;
+        if (tasks <= 0 ) {
+            return result;
         }
 
-        // construct adj list
-        Map<Integer, Set<Integer>> adj = new HashMap<>();
+        int[] inorderMap = buildInorderMap(tasks);
 
-        for ( int[] e : prerequisites ) {
+        Map<Integer, List<Integer>> adjList = adj(inorderMap,prerequisites);
 
-            int fromV = e[0];
-            int toV = e[1];
 
-            Set<Integer> set = adj.getOrDefault(fromV, new HashSet<>());
-            set.add(toV);
-            adj.put(fromV, set);
 
-        }
+        Queue<Integer> q = new LinkedList<>();
 
-        for ( int i = 0; i < inorders.length; ++i ) {
-            if ( inorders[i] == 0 ) {
-                dfs(i, adj, inorders, orders, new ArrayList<>());
+        for (int i = 0; i < inorderMap.length; ++i) {
+            if (inorderMap[i] == 0) {
+                q.offer(i);
             }
         }
 
-        return orders;
+        toplogicSort(inorderMap, q,  adjList,  new ArrayList<>(),  result, tasks);
+
+        return result;
     }
 
-    public static void dfs( int v, Map<Integer, Set<Integer>> adj, int[] inorders, List<List<Integer>> results, List<Integer> p) {
-
-        // out order is 0
-        if ( v == -1 ) {
-            results.add(new ArrayList<>(p));
-            return;
-        }
-
-        if ( inorders[v] == 0 ) {
-            p.add(v);
-        }
-
-        if ( adj.get(v) != null ) {
-            for ( int e : adj.get(v) ) {
-                dfs(e, adj, inorders, results, p);
-            }
-
-            inorders[v]--;
-        } else {
-            dfs(-1, adj, inorders, results, p);
-        }
-
+    int mapTaskIdToIndex(int i) {
+        return i;
     }
 
-    public List<Integer> toplogicSort(int v, int[][] edges, int[] inordersI) {
+    Map<Integer, List<Integer>> adj(int[] inorderMap, int[][] prerequisites) {
 
-        int[] inorders = new int[inordersI.length];
+        Map<Integer, List<Integer>> map = new HashMap<>();
 
-        for (int i = 0 ; i < inordersI.length; ++i) {
-            inorders[i] = inordersI[i];
+        for ( int[] p : prerequisites ) {
+
+            int k = p[0];
+            int v = p[1];
+
+            List<Integer> l =  map.getOrDefault(k, new ArrayList<>());
+            l.add(v);
+            map.put(k,l);
+
+            inorderMap[mapTaskIdToIndex(v)]++;
         }
 
-        List<Integer> result = new ArrayList<>();
+        return map;
+    }
 
-        Queue<Integer> queue = new LinkedList<>();
+    int[] buildInorderMap(int tasks) {
+        return new int[tasks];
+    }
 
-        queue.add(v);
+    void toplogicSort(int[] inorderMap,  Queue<Integer> q, Map<Integer, List<Integer>> adjList, List<Integer> path, List<List<Integer>> result, int tasks) {
 
-        while ( !queue.isEmpty() ) {
+        if (path.size() == tasks) {
+            result.add(new ArrayList<>(path));
+        }
 
-            int t = queue.poll();
+        if (!q.isEmpty()) {
 
-            for ( int[] e : edges ) {
-                if ( e[0] == t ) {
-                    if ( --inorders[e[1]] == 0 ) {
-                        queue.add(e[1]);
+            for (Integer node : q) {
+
+                path.add(node);
+
+                Queue<Integer> clone = cloneQueue(q);
+                clone.remove(node);
+
+                if (adjList.get(node) != null) {
+                    for (int nb : adjList.get(node)) {
+                        inorderMap[mapTaskIdToIndex(nb)]--;
+                        if (inorderMap[mapTaskIdToIndex(nb)] == 0) {
+                            clone.offer(nb);
+                        }
+                    }
+                }
+
+                toplogicSort(inorderMap, clone, adjList, path, result, tasks);
+
+                path.remove(path.size() - 1);
+
+                if (adjList.get(node) != null) {
+                    for (int nb : adjList.get(node)) {
+                        inorderMap[mapTaskIdToIndex(nb)]++;
                     }
                 }
             }
 
-            result.add(t);
+
         }
-
-        return result;
-
     }
+
+    Queue<Integer> cloneQueue(Queue<Integer> q) {
+        return new LinkedList<>(q);
+    }
+
 
     public static void main(String[] args) {
 
-//        List<List<Integer>> orders = printOrders(4, new int[][]{{3, 2}, {3, 0}, {2, 0}, {2, 1}});
-//
-//        for ( List<Integer> order : orders ) {
-//            for (Integer o : order) {
-//                System.out.print(o);
-//            }
-//            System.out.println();
-//        }
+        AllTaskScheduleOrders sol = new AllTaskScheduleOrders();
 
-        System.out.println( 0 | 1) ;
-        System.out.println( 0 | 2) ;
-        System.out.println( 0 | 4) ;
+        List<List<Integer>> result1 = sol.printOrders(4, new int[][] { new int[] { 3, 2 },
+                new int[] { 3, 0 }, new int[] { 2, 0 }, new int[] { 2, 1 } });
+        System.out.println("Topological orders for tasks 2:");
+        for (List<Integer> order : result1) {
+            System.out.println(order);
+        }
 
-        System.out.println( 1 | 1) ;
-        System.out.println( 1 | 2) ;
-        System.out.println( 1 | 4) ;
+        List<List<Integer>> result2 = sol.printOrders(3,
+                new int[][] { new int[] { 0, 1 }, new int[] { 1, 2 } });
+        System.out.println("Topological orders for tasks 1:");
+        for (List<Integer> order : result2) {
+            System.out.println(order);
+        }
 
-        System.out.println( 2 | 1) ;
-        System.out.println( 2 | 2) ;
-        System.out.println( 2 | 4) ;
+        List<List<Integer>> result3 = sol.printOrders(6,
+                new int[][] { new int[] { 2, 5 }, new int[] { 0, 5 }, new int[] { 0, 4 },
+                        new int[] { 1, 4 }, new int[] { 3, 2 }, new int[] { 1, 3 } });
+        System.out.println("Topological orders for tasks 3:");
+        for (List<Integer> order : result3) {
+            System.out.println(order);
+        }
 
 
 

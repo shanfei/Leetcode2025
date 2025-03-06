@@ -58,121 +58,127 @@ public class AlienDictionary {
 
     public static String findOrder(String[] words) {
 
-        List<char[]> wordsCharList = new ArrayList<>();
+        Map<Integer, Set<Integer>> adj = buildAdj(words);
 
-        for (String w: words) {
-            wordsCharList.add(w.toCharArray());
-        }
+        Map<Integer, Integer> indegreeMap = buildIndegreeMap(words, adj);
 
-        Integer[] indegreeMapOfChars = new Integer[26];
+        return toplogicSort(adj, indegreeMap);
 
-        int i = 0;
-
-        boolean run = true;
-
-        Map<Integer, Set<Integer>> adjancetMap = new HashMap<>();
-
-        while ( run ) {
-
-            for (int j = 1; j < wordsCharList.size(); ++j) {
-
-                if ( i >= wordsCharList.get(j - 1).length || i >= wordsCharList.get(j).length ) {
-                    run = false;
-                    break;
-                }
-
-                int parent = wordsCharList.get(j - 1)[i] - 'a';
-                int child = wordsCharList.get(j)[i] - 'a';
-
-                if (parent != child) {
-                    Set<Integer> l = adjancetMap.getOrDefault(parent, new HashSet<>());
-                    l.add(child);
-                    adjancetMap.put(parent, l);
-                }
-
-                if (indegreeMapOfChars[parent] == null) {
-                    indegreeMapOfChars[parent] = 0;
-                }
-
-                if (indegreeMapOfChars[child] == null) {
-                    indegreeMapOfChars[child] = 1;
-                } else if (child != parent) {
-                    indegreeMapOfChars[child]++;
-                }
-            }
-
-            i++;
-        }
-
-
-        return bfs(adjancetMap, indegreeMapOfChars);
     }
 
-    static String bfs(Map<Integer, Set<Integer>> adjancetMap,  Integer[] indegreeMapOfChars) {
-
-        List<Integer> l = new ArrayList<>();
-
-        int size = 0;
-
-        for (int i = 0; i < indegreeMapOfChars.length; ++i) {
-            Integer indegree = indegreeMapOfChars[i];
-            if (indegree != null && indegree == 0) {
-                l.add(i);
-            }
-
-            if (indegree != null) {
-                size++;
-            }
-        }
-
-        Set<Integer> visited = new HashSet<>();
-
-        Queue<Integer> queue = new LinkedList<>(l);
+    static String toplogicSort(Map<Integer, Set<Integer>> adj,  Map<Integer, Integer> indegreeMap) {
 
         StringBuilder sb = new StringBuilder();
 
-        while ( !queue.isEmpty() ) {
+        Queue<Integer> q = new LinkedList<>();
 
-            int i = queue.poll();
+        for ( Map.Entry<Integer, Integer> e : indegreeMap.entrySet() ) {
+            if ( e.getValue() == 0 ) {
+                q.offer(e.getKey());
+            }
+        }
 
-            sb.append((char)(i + 'a'));
+        while (!q.isEmpty()) {
 
-            visited.add(i);
+            int n = q.poll();
 
-            Set<Integer> k = adjancetMap.get(i);
+            sb.append((char)(n + 'a'));
 
-           for (int j : k) {
+            Set<Integer> nbs = adj.getOrDefault(n, new HashSet<>());
 
-               if (visited.contains(j)) {
-                   continue;
-               }
+            for ( int nb : nbs ) {
 
-               indegreeMapOfChars[j]--;
+                indegreeMap.put(nb, indegreeMap.get(nb)-1);
 
-               if (indegreeMapOfChars[j] == 0) {
-                   queue.add(j);
-               }
-           }
+                if ( indegreeMap.get(nb) == 0 ) {
+                    q.offer(nb);
+                }
+            }
+        }
+
+        if ( sb.length() != indegreeMap.size() ) {
+            return "";
+        }
+
+
+        return sb.toString();
+
+
+    }
+
+    static Map<Integer, Set<Integer>> buildAdj(String[] words) {
+
+        Map<Integer, Set<Integer>> adj = new HashMap<>();
+
+        for (String word : words) {
+            for (char character : word.toCharArray()) {
+                adj.put(character - 'a', new HashSet<>());
+            }
+        }
+
+        for ( int i = 0; i < words.length - 1; ++i ) {
+
+            String w = words[i];
+            String nw = words[i + 1];
+
+            if (w.contains(nw)) {
+                continue;
+            }
+
+            for ( int j = 0; j < w.length() && j < nw.length(); ++j ) {
+
+                int c1 = w.charAt(j) - 'a';
+                int c2 = nw.charAt(j) - 'a';
+
+                if ( c1 != c2 ) {
+                    Set<Integer> nbs = adj.getOrDefault(c1, new HashSet<>());
+                    nbs.add(c2);
+                    adj.put(c1, nbs);
+                    break;
+                }
+            }
 
         }
 
-        if (sb.length() != size )
-            return "";
-
-        return sb.toString();
+        return adj;
     }
+
+    static Map<Integer, Integer> buildIndegreeMap(String[] words, Map<Integer, Set<Integer>> adj) {
+
+        Map<Integer, Integer> indegreeMap = new HashMap<>();
+
+        for (String word : words) {
+            for (char character : word.toCharArray()) {
+                indegreeMap.put(character - 'a', 0);
+            }
+        }
+
+        for ( int key : adj.keySet() ) {
+
+            Set<Integer> nbs = adj.get(key);
+
+            for (int nb : nbs) {
+                indegreeMap.put(nb, indegreeMap.getOrDefault(nb, 0) + 1);
+            }
+        }
+
+        return indegreeMap;
+
+    }
+
+
 
     public static void main(String[] args) {
 
-        String[][] p = {
-//                {"ba", "bc", "ac", "cab"},
-//                {"cab", "aaa", "aab"},
-                {"ywx", "wz", "xww", "xz", "zyy", "zwz"}
-        } ;
+        AlienDictionary sol = new AlienDictionary();
+        String result = sol.findOrder(new String[] { "ba", "bc", "ac", "cab" });
+        System.out.println("Character order: " + result);
 
-        for (String[] pp : p) {
-            System.out.println(findOrder(pp));
-        }
+        result = sol.findOrder(new String[] { "cab", "aaa", "aab" });
+        System.out.println("Character order: " + result);
+
+        result = sol.findOrder(new String[] { "ywx", "wz", "xww", "xz", "zyy", "zwz" });
+        System.out.println("Character order: " + result);
     }
 
 
