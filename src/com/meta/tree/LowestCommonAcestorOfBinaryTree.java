@@ -21,6 +21,21 @@ public class LowestCommonAcestorOfBinaryTree {
 
     }
 
+    protected TreeNode lcaLoop(TreeNode root, TreeNode p, TreeNode q) {
+
+        while ( root != null ) {
+            if ( p.val < root.val && q.val < root.val ) {
+                root = root.left;
+            } else if ( p.val > root.val && q.val > root.val ) {
+                root = root.right;
+            } else {
+                return root;
+            }
+        }
+
+        return root;
+    }
+
     protected TreeNode lowestCommonAncestorR(TreeNode root, TreeNode p, TreeNode q) {
 
         if ( root == null ) {

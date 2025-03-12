@@ -1,4 +1,4 @@
-package com.meta.binarysort;
+package com.meta.binarysearch;
 
 import java.util.*;
 
