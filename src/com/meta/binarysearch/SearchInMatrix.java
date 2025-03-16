@@ -13,11 +13,11 @@ package com.meta.binarysearch;
  */
 public class SearchInMatrix {
 
-    public boolean searchMatrix(int[][] matrix, int target) {
-
-    }
-
-    int binarySearch() {
-
-    }
+//    public boolean searchMatrix(int[][] matrix, int target) {
+//
+//    }
+//
+//    int binarySearch() {
+//
+//    }
 }
