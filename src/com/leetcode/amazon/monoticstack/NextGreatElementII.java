@@ -1,5 +1,8 @@
 package com.leetcode.amazon.monoticstack;
 
+import java.util.Arrays;
+import java.util.Stack;
+
 /**
  *
  * Given a circular integer array nums, return the array containing the next greater number for each element in nums.
@@ -37,9 +40,25 @@ public class NextGreatElementII {
     // Function to find the next greater element for each element in the circular array
     public int[] nextGreaterElements(int[] nums) {
 
+        int N = nums.length;
+        Stack<Integer> ms = new Stack<>();
 
+        int[] r = new int[N];
+        Arrays.fill(r, -1);
 
-        return nums;
+        for ( int i = 0; i < N * 2 ;  ++i ) {
+            int n = nums[i % N];
+
+            while ( !ms.isEmpty() && nums[ms.peek()] < n ) {
+                r[ms.pop()] = n;
+            }
+
+            if (n < N) {
+                ms.push(i);
+            }
+        }
+
+        return r;
     }
 
 
